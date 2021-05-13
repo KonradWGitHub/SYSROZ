@@ -20,6 +20,8 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if session.get('email'):
+        return redirect(url_for('log_suc'))
     if request.method == 'POST':
         if 'register' in request.form:
             register = request.form['register']
@@ -34,7 +36,8 @@ def login():
             info = cursor.fetchone()
             if submit_login == "Log me in":
                 if info is not None:
-                    return redirect(url_for('reg_suc'))
+                    session['email'] = email
+                    return redirect(url_for('log_suc'))
                 else:
                     return render_template("login.html", error=1)
     return render_template("login.html")
@@ -69,9 +72,33 @@ def signup():
     return render_template("register.html")
 
 
-@app.route('/register/success')
-def reg_suc():
-    return render_template("main_page.html")
+@app.route('/login/success', methods=['GET', 'POST'])
+def log_suc():
+    if session.get('email'):
+        if session['email']:
+            email = session['email']
+            id = "16"
+            if request.method == 'POST':
+                if 'logout' in request.form:
+                    submit_logout = request.form['logout']
+                    if submit_logout == "Logout":
+                        return redirect(url_for('logout'))
+                if 'submit_delete' in request.form:
+                    submit_delete = request.form['submit_delete']
+                    if submit_delete == "Delete account":
+                        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+                        cursor.execute("DELETE FROM users WHERE email=%s", (email,))
+                        db.connection.commit()
+                        return redirect(url_for('logout'))
+            return render_template('main_page.html')
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route('/logout')
+def logout():
+    session.pop('email', None)
+    return redirect(url_for('login'))
 
 
 if __name__ == '__main__':
