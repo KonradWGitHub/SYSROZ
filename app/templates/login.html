@@ -3,30 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='login_style.css') }}">
-     <script type="text/javascript">
-         var error= {{error}}
-     </script>
+    <link rel="icon" href="https://img.favpng.com/13/19/18/chat-icon-png-favpng-VKinQiXDg2r36LkdNHRSUCeDr.jpg">
 </head>
 <body>
-<div id="login-box">
-  <div class="left">
-    <h1>Log in</h1>
-
-      <form action="" method="POST">
-          <input type="text" name="email" placeholder="E-mail" />
-          <input type="password" name="password" placeholder="Password" />
-          <input class="login" type="submit" name="login" value="Log me in" />
-          <input class="register" type="submit" name="register" value="Create an account" />
-      </form>
-  </div>
+<div id="main"></div>
+{% with messages = get_flashed_messages(with_categories=True) %}
+{% if messages %}
+{% for category,message in messages %}
+{% if category == 0 %}
+<div class="alert alert-warning" role="alert">
+    <strong>Login unsuccessful!</strong><span> {{ message }}</span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
-<ul>
-            <script type="text/javascript">
-            if ( error == 1){
-            alert("LOGIN UNSUCCESSFUL \nFill gaps with correct credentials");
-            }
-            </script>
-</ul>
+{% elif category == 1 %}
+<div class="alert alert-success" role="alert">
+    <strong>Success!</strong><span> {{ message }}</span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endwith %}
+{% block body %}{% endblock %}
+<div id="login-box">
+    <div class="left">
+        <h1>Log in</h1>
+
+        <form action="" method="POST">
+            <input type="text" name="email" placeholder="E-mail"/>
+            <input type="password" name="password" placeholder="Password"/>
+            <input class="login" type="submit" name="login" value="Log me in"/>
+            <input class="register" type="submit" name="register" value="Create an account"/>
+        </form>
+    </div>
+</div>
 </body>
 </html>

@@ -2,27 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create an account</title>
+    <title>Manage account</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='register_style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='change_psswd_style.css') }}">
     <link rel="icon" href="https://img.favpng.com/13/19/18/chat-icon-png-favpng-VKinQiXDg2r36LkdNHRSUCeDr.jpg">
 </head>
 <body>
-<div id="main"></div>
 {% with messages = get_flashed_messages(with_categories=True) %}
 {% if messages %}
-{% for category, message in messages %}
+{% for category,message in messages %}
 {% if category == 0 %}
 <div class="alert alert-warning" role="alert">
-    <strong>Register unsuccessful!</strong><span> {{ message }}</span>
+    <strong>Warning!</strong><span> {{ message }}</span>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-{% endif %}
-{% if category == 1 %}
+{% elif category == 1 %}
 <div class="alert alert-success" role="alert">
     <strong>Success!</strong><span> {{ message }}</span>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -34,17 +32,39 @@
 {% endif %}
 {% endwith %}
 {% block body %}{% endblock %}
+<div id="mySidepanel" class="sidepanel">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="/home">Home</a>
+    <a href="/manage_account">Manage account</a>
+    <a href="/logout">Logout</a>
+</div>
+<div id="main">
+    <button class="openbtn" onclick="openNav()">&#9776; Menu</button>
+</div>
 <div id="login-box">
     <div class="left">
-        <h1>Sign up</h1>
+        <h1>Manage account</h1>
+        <h2>Delete account</h2>
         <form action="" method="POST">
-            <input type="text" name="username" placeholder="Username"/>
-            <input type="text" name="email" placeholder="E-mail"/>
+            <input type="submit" name="delete_submit" value="Delete account"/>
+        </form>
+        <h2>Change password</h2>
+        <form action="" method="POST">
             <input type="password" name="password" placeholder="Password"/>
-            <input type="password" name="password2" placeholder="Retype password"/>
-            <input type="submit" name="signup_submit" value="Sign me up"/>
+            <input type="password" name="new_password" placeholder="New password"/>
+            <input type="submit" name="submit" value="Change password"/>
         </form>
     </div>
 </div>
+<script>
+function openNav() {
+  document.getElementById("mySidepanel").style.width = "250px";
+}
+function closeNav() {
+  document.getElementById("mySidepanel").style.width = "0";
+}
+
+
+</script>
 </body>
 </html>

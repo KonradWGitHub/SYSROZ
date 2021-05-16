@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect, request, session
+from flask import Flask, render_template, url_for, redirect, request, session, flash
 from flask_mysqldb import MySQL
 import MySQLdb
 
@@ -18,6 +18,7 @@ def index():
     return redirect(url_for('login'))
 
 
+# ----------LOGIN----------------------------------------------------------------------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if session.get('email'):
@@ -37,12 +38,16 @@ def login():
             if submit_login == "Log me in":
                 if info is not None:
                     session['email'] = email
+                    fm = "logged in as {0}".format(email)
+                    flash(fm, 1)
                     return redirect(url_for('log_suc'))
                 else:
-                    return render_template("login.html", error=1)
+                    flash("Wrong email/password. Fill blanks with the correct", 0)
+                    return render_template("login.html")
     return render_template("login.html")
 
 
+# ----------REGISTER----------------------------------------------------------------------------
 @app.route('/register', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -54,51 +59,83 @@ def signup():
             submit = request.form['signup_submit']
             if submit == "Sign me up" and (email, password, username, password2) is not None:
                 cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-                cursor.execute("SELECT * FROM users WHERE username= %s AND email=%s AND  password=%s",
-                               (username, email, password))
+                cursor.execute("SELECT * FROM users WHERE username= %s OR email=%s",
+                               (username, email))
                 info = cursor.fetchone()
                 if info is not None:
-                    return render_template("register.html", error=1)
-
+                    flash("Username/email already taken.", 0)
+                    return render_template("register.html")
                 elif password != password2:
-                    return render_template("register.html", error=2)
+                    flash("Retype the same password.", 0)
+                    return render_template("register.html")
                 elif username != "" and email != "" and password != "" and password2 != "":
                     cursor.execute("INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
                                    (username, email, password))
                     db.connection.commit()
+                    flash("Registered successfully!", 1)
                     return redirect(url_for('login'))
                 else:
-                    return render_template("register.html", error=3)
+                    flash("Fill blanks.", 0)
+                    return render_template("register.html")
     return render_template("register.html")
 
 
-@app.route('/login/success', methods=['GET', 'POST'])
+# ----------LOGIN-SUCCESS-(MAIN-PAGE)-------------------------------------------------------------------------
+@app.route('/home', methods=['GET', 'POST'])
 def log_suc():
     if session.get('email'):
         if session['email']:
-            email = session['email']
-            id = "16"
-            if request.method == 'POST':
-                if 'logout' in request.form:
-                    submit_logout = request.form['logout']
-                    if submit_logout == "Logout":
-                        return redirect(url_for('logout'))
-                if 'submit_delete' in request.form:
-                    submit_delete = request.form['submit_delete']
-                    if submit_delete == "Delete account":
-                        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-                        cursor.execute("DELETE FROM users WHERE email=%s", (email,))
-                        db.connection.commit()
-                        return redirect(url_for('logout'))
             return render_template('main_page.html')
     else:
         return redirect(url_for('login'))
 
 
+# ----------LOGOUT----------------------------------------------------------------------------
 @app.route('/logout')
 def logout():
     session.pop('email', None)
     return redirect(url_for('login'))
+
+
+# -----------CHANGE-PASSWORD----------------------------------------------------------------
+@app.route('/manage_account', methods=['GET', 'POST'])
+def manage_account():
+    if session.get('email'):
+        if session['email']:
+            email = session['email']
+            if 'delete_submit' in request.form:
+                delete_submit = request.form['delete_submit']
+                if delete_submit == "Delete account":
+                    cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+                    cursor.execute("DELETE FROM users WHERE email=%s", (email,))
+                    db.connection.commit()
+                    flash("Successfully deleted the account.", 1)
+                    return redirect(url_for('logout'))
+            if 'submit' in request.form and 'password' in request.form and 'new_password' in request.form:
+                submit = request.form['submit']
+                password = request.form['password']
+                new_password = request.form['new_password']
+                if submit == "Change password":
+                    cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+                    cursor.execute("SELECT * FROM users WHERE email=%s AND password=%s", (email, password))
+                    info = cursor.fetchone()
+                    if info is not None:
+                        if password != "" and new_password != "":
+                            cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+                            cursor.execute("UPDATE users SET password=%s WHERE email=%s",
+                                           (new_password, email,))
+                            db.connection.commit()
+                            print(info)
+                            flash("Password changed!", 1)
+                            return redirect(url_for('log_suc'))
+                    else:
+                        flash("Fill blanks.", 0)
+                        print(info)
+                        return render_template("manage_account")
+            return render_template('manage_account.html')
+    else:
+        return redirect(url_for('login'))
+
 
 
 if __name__ == '__main__':
