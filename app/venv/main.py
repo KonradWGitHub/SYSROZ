@@ -85,7 +85,13 @@ def signup():
 def log_suc():
     if session.get('email'):
         if session['email']:
-            return render_template('main_page.html')
+            users = []
+            cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute("SELECT username FROM users")
+            info = cursor.fetchall()
+            for user in range(len(info)):
+                users.append(info[user]['username'])
+            return render_template('main_page.html', Users=users)
     else:
         return redirect(url_for('login'))
 
@@ -135,7 +141,6 @@ def manage_account():
             return render_template('manage_account.html')
     else:
         return redirect(url_for('login'))
-
 
 
 if __name__ == '__main__':
