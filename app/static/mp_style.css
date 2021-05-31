@@ -29,31 +29,10 @@ body {
   left: 0;
   box-sizing: border-box;
   padding: 40px;
-  width: 600px;
+  width: 1000px;
   height: 600px;
 }
 
-input[type="submit"] {
-  margin-top: 28px;
-  width: 120px;
-  height: 32px;
-  background: #16a085;
-  border: none;
-  border-radius: 2px;
-  color: #FFF;
-  font-family: 'Roboto', sans-serif;
-  font-weight: 500;
-  text-transform: uppercase;
-  transition: 0.1s ease;
-  cursor: pointer;
-}
-
-input[type="submit"]:hover,
-input[type="submit"]:focus {
-  opacity: 0.8;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-  transition: 0.1s ease;
-}
 
 /* The sidebar menu */
 .sidebar {
@@ -136,4 +115,130 @@ input[type="submit"]:focus {
   position: relative;
   top: 0;
   background-color: #111;
+}
+.list {
+    height: 350px;
+    width: 850px;
+    overflow-y: scroll;
+}
+
+li {
+    list-style-type: none;
+    }
+
+#my_message_text{
+    text-align: left;
+    padding-left:20px;
+    font-size: 16px;
+    background: #00e2b8;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+    margin-bottom:2px;
+}
+
+#my_message{
+    text-align:right;
+    padding-right:20px;
+    font-weight: bold;
+    font-size: 16px;
+    background: #00e2b8;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+}
+
+#r_message_text{
+    text-align: left;
+    padding-left:20px;
+    font-size: 16px;
+    background: #e6e6e6;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+    margin-bottom:2px;
+}
+
+#r_message{
+    text-align:left;
+    padding-left:20px;
+    font-weight: bold;
+    font-size: 16px;
+    background: #e6e6e6;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+}
+
+button[id^='send'],
+button[id^='get_history']{
+  width: 120px;
+  height: 32px;
+  background: #16a085;
+  margin-bottom:10px;
+  border: none;
+  border-radius: 2px;
+  color: #FFF;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  transition: 0.1s ease;
+  cursor: pointer;
+}
+button[id^='send'],
+button[id^='get_history']:hover,
+button[id^='send'],
+button[id^='get_history']:focus {
+  opacity: 0.8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  transition: 0.1s ease;
+}
+
+button[id^='send'],
+button[id^='get_history']:active {
+  opacity: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  transition: 0.1s ease;
+}
+input[type="text"]{
+  padding: 4px;
+  width: 600px;
+  height: 32px;
+  border: none;
+  border-bottom: 1px solid #AAA;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  transition: 0.2s ease;
+}
+input[type="text"]:focus{
+  border-bottom: 2px solid #16a085;
+  color: #16a085;
+  transition: 0.2s ease;
+}
+.dropdown-btn {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  border: none;
+  background: none;
+  cursor: pointer;
+  outline: none;
+  transition: 0.3s;
+}
+.dropdown-btn:hover {
+  color: #f1f1f1;
+}
+
+.dropdown-container {
+  display: none;
+  padding-left: 8px;
+}
+.fa-caret-down {
+  float: right;
+}
+
+div[id^='tab'] {
+    border-width: 2px;
+    border-color: #16a085;
+    border-style:solid;
+    border-radius: 25px;
 }

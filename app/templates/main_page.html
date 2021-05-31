@@ -3,11 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Main</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
     <link rel="stylesheet" href="../static/mp_style.css">
     <link rel="icon" href="https://img.favpng.com/13/19/18/chat-icon-png-favpng-VKinQiXDg2r36LkdNHRSUCeDr.jpg">
+    <style>
+    .nav-link:hover {
+    border-color: transparent !important;
+    }
+    .nav-link.active{
+    background-color:transparent !important;
+    border-color: transparent !important;
+    }
+    </style>
+    <script>
+        var users = {{Users|safe}};
+        var id = "none";
+        function reply_click(clicked_id){
+        id = clicked_id;
+        }
+    </script>
 </head>
 <body>
 <div id="mySidepanel" class="sidepanel">
@@ -15,6 +33,19 @@
     <a href="/home">Home</a>
     <a href="/manage_account">Manage account</a>
     <a href="/logout">Logout</a>
+    <button class="dropdown-btn">Users
+        <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-container">
+        <ul class="nav nav-tabs">
+            {% for user in Users%}
+            <li class="nav-item">
+                    <a id="{{user}}" class="nav-link" data-toggle="tab" href="#tab{{user}}"
+                       onclick="reply_click(this.id)">{{user}}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 <div id="main">
     <button class="openbtn" onclick="openNav()">&#9776; Menu</button>
@@ -44,12 +75,22 @@
 {% block body %}{% endblock %}
 <div id="box">
     <div class="left">
-        <h1>Work in progress</h1>
-        <select name="Users" size="5">
-            {% for user in Users%}
-            <option>{{user}}</option>
-            {% endfor%}
-        </select>
+        <h2 style="text-align: center;">Chat app</h2>
+        <div class="container mt-3">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                {% for user in Users%}
+                <div id="tab{{user}}" class="container tab-pane fade"><br>
+                    <h3>{{user}}</h3>
+                    <div id="messages{{user}}" class="list"></div>
+                    <br>
+                    <input type="text" id="message{{user}}" placeholder="Type message">
+                    <button id="send{{user}}">Send</button>
+                    <button id="get_history{{user}}">Get history</button>
+                </div>
+                {% endfor%}
+            </div>
+        </div>
     </div>
 </div>
 <script>
@@ -59,6 +100,12 @@ function openNav() {
 function closeNav() {
   document.getElementById("mySidepanel").style.width = "0";
 }
+
+
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+<script>
+    setInterval(uptd_users ,2000);
 </script>
 </body>
 </html>
